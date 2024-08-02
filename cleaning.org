@@ -88,6 +88,7 @@
 #+begin_src python :session cleaning :results graphics file link :file score_box.png
   import seaborn as sns
   sns.boxplot(df['score']).set_title('score')
+  return 'score_box.png'
 #+end_src
 
 #+RESULTS:
