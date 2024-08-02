@@ -84,17 +84,8 @@
 #+end_src
 
 #+RESULTS:
-: count    999.000000
-: mean     648.621622
-: std       98.264219
-: min      376.000000
-: 25%      580.000000
-: 50%      653.000000
-: 75%      721.000000
-: max      850.000000
-: Name: score, dtype: float64
 **** boxplot
-#+begin_src python :session cleaning :results graphics file output :file score_box.png
+#+begin_src python :session cleaning :results graphics file link :file score_box.png
   import seaborn as sns
   sns.boxplot(df['score']).set_title('score')
 #+end_src
