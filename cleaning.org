@@ -1,0 +1,165 @@
+#+title: Limpeza de Dados com Python
+#+startup: inlineimages
+#+startup: indent
+
+
+* Analise de Churn
+** Importacao e criacao do dataframe
+#+begin_src python :session cleaning :results output
+  import pandas as pd
+  df = pd.read_csv('cleaning/Churn.csv', sep=';')
+  print(df)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+       X0   X1  X2         X3  X4  X4.1        X6  X7  X8  X9         X10  X11
+0       1  619  RS   Feminino  42     2         0   1   1   1  10134888.0    1
+1       2  608  SC   Feminino  41     1   8380786   1   0   1  11254258.0    0
+2       3  502  RS   Feminino  42     8   1596608   3   1   0  11393157.0    1
+3       4  699  RS   Feminino  39     1         0   2   0   0   9382663.0    0
+4       5  850  SC   Feminino  43     2  12551082   1   1   1    790841.0    0
+..    ...  ...  ..        ...  ..   ...       ...  ..  ..  ..         ...  ...
+994   996  838  SC  Masculino  43     9  12310588   2   1   0  14576583.0    0
+995   997  610  SC  Masculino  29     9         0   3   0   1   8391224.0    0
+996   998  811  SC  Masculino  44     3         0   2   0   1   7843973.0    0
+997   999  587  SC  Masculino  62     7  12128627   1   0   1    677692.0    0
+998  1000  811  PR   Feminino  28     4  16773882   2   1   1    990342.0    0
+
+[999 rows x 12 columns]
+#+end_example
+
+** Renomear as colunas
+#+begin_src python :session cleaning :results output
+  df.columns = ["id", "score", "state", "gender", "age", "qty_patrimony", "balance", "qty_products", "has_credit_card", "is_active", "salary", "churn"]
+  print(df)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+       id  score state     gender  age  qty_patrimony   balance  qty_products  has_credit_card  is_active      salary  churn
+0       1    619    RS   Feminino   42              2         0             1                1          1  10134888.0      1
+1       2    608    SC   Feminino   41              1   8380786             1                0          1  11254258.0      0
+2       3    502    RS   Feminino   42              8   1596608             3                1          0  11393157.0      1
+3       4    699    RS   Feminino   39              1         0             2                0          0   9382663.0      0
+4       5    850    SC   Feminino   43              2  12551082             1                1          1    790841.0      0
+..    ...    ...   ...        ...  ...            ...       ...           ...              ...        ...         ...    ...
+994   996    838    SC  Masculino   43              9  12310588             2                1          0  14576583.0      0
+995   997    610    SC  Masculino   29              9         0             3                0          1   8391224.0      0
+996   998    811    SC  Masculino   44              3         0             2                0          1   7843973.0      0
+997   999    587    SC  Masculino   62              7  12128627             1                0          1    677692.0      0
+998  1000    811    PR   Feminino   28              4  16773882             2                1          1    990342.0      0
+
+[999 rows x 12 columns]
+#+end_example
+*** Dados categoricos
+- State
+- Gender
+** Exploracao dos dados categoricos
+*** Dados categoricos sao os dados que sao nao-calculaveis, podendo ser tambem ordenaveis
+*** Categoricos Nominais ou Categoricos Ordinais
+*** Estado
+#+begin_src python :session cleaning :results graphics file output :file state.png
+  state = df.groupby(["state"]).size()
+  state.plot.bar()
+#+end_src
+
+#+RESULTS:
+[[file:state.png]]
+
+*** Genero
+#+begin_src python :session cleaning :results graphics file output :file gender.png
+  gender = df.groupby(["gender"]).size()
+  gender.plot.bar()
+#+end_src
+
+#+RESULTS:
+[[file:gender.png]]
+
+** Exploracao dos dados numericos
+*** score
+**** describe
+#+begin_src python :session cleaning :results output
+  print(df['score'].describe())
+#+end_src
+
+#+RESULTS:
+: count    999.000000
+: mean     648.621622
+: std       98.264219
+: min      376.000000
+: 25%      580.000000
+: 50%      653.000000
+: 75%      721.000000
+: max      850.000000
+: Name: score, dtype: float64
+**** boxplot
+#+begin_src python :session cleaning :results graphics file output :file score_box.png
+  import seaborn as sns
+  sns.boxplot(df['score']).set_title('score')
+#+end_src
+
+#+RESULTS:
+[[file:score_box.png]]
+**** histograma
+#+begin_src python :session cleaning :results graphics file output :file score_histogram.png
+  sns.distplot(df['score']).set_title('score')
+#+end_src
+
+#+RESULTS:
+[[file:score_histogram.png]]
+
+
+*** age
+**** describe
+#+begin_src python :session cleaning :results output
+  print(df['age'].describe())
+#+end_src
+
+#+RESULTS:
+: count    999.000000
+: mean      38.902903
+: std       11.401912
+: min      -20.000000
+: 25%       32.000000
+: 50%       37.000000
+: 75%       44.000000
+: max      140.000000
+: Name: age, dtype: float64
+**** boxplot
+#+begin_src python :session cleaning :results graphics file output :file age_box.png
+  sns.boxplot(df['age']).set_title('age')
+#+end_src
+
+#+RESULTS:
+[[file:age_box.png]]
+
+**** histogram
+#+begin_src python :session cleaning :results graphics file output :file age_hist.png
+  sns.distplot(df['age']).set_title('age')
+#+end_src
+
+#+RESULTS:
+[[file:age_hist.png]]
+
+*** balance
+**** describe
+#+begin_src python :session cleaning :results output
+  print(df['balance'].describe())
+#+end_src
+
+#+RESULTS:
+: count    9.990000e+02
+: mean     7.164928e+06
+: std      6.311840e+06
+: min      0.000000e+00
+: 25%      0.000000e+00
+: 50%      8.958835e+06
+: 75%      1.258684e+07
+: max      2.117743e+07
+: Name: balance, dtype: float64
+
+**** boxplot
+#+begin_src python :session cleaning :results graphics file output :file balance_box.png
+  sns.boxplot(df['balance']).set_title("balance")
+#+end_src
