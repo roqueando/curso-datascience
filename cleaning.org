@@ -84,15 +84,24 @@
 #+end_src
 
 #+RESULTS:
+: count    999.000000
+: mean     648.621622
+: std       98.264219
+: min      376.000000
+: 25%      580.000000
+: 50%      653.000000
+: 75%      721.000000
+: max      850.000000
+: Name: score, dtype: float64
 **** boxplot
-#+begin_src python :session cleaning :results graphics file link :file score_box.png
+#+begin_src python :session cleaning :results graphics file output :file score_box.svg
   import seaborn as sns
   sns.boxplot(df['score']).set_title('score')
-  return 'score_box.png'
 #+end_src
 
 #+RESULTS:
-[[file:score_box.png]]
+[[file:score_box.svg]]
+
 **** histograma
 #+begin_src python :session cleaning :results graphics file output :file score_histogram.png
   sns.distplot(df['score']).set_title('score')
@@ -100,7 +109,6 @@
 
 #+RESULTS:
 [[file:score_histogram.png]]
-
 
 *** age
 **** describe
@@ -155,3 +163,111 @@
 #+begin_src python :session cleaning :results graphics file output :file balance_box.png
   sns.boxplot(df['balance']).set_title("balance")
 #+end_src
+
+#+RESULTS:
+[[file:balance_box.png]]
+
+**** histograma
+#+begin_src python :session cleaning :results graphics file output :file balance_histogram.png
+  sns.distplot(df['balance']).set_title('balance')
+#+end_src
+
+#+RESULTS:
+[[file:balance_histogram.png]]
+
+*** salary
+**** describe
+#+begin_src python :session cleaning :results output
+  print(df['salary'].describe())
+#+end_src
+
+#+RESULTS:
+: count    9.920000e+02
+: mean     3.528762e+07
+: std      5.305800e+08
+: min      9.677000e+03
+: 25%      3.029011e+06
+: 50%      8.703250e+06
+: 75%      1.405213e+07
+: max      1.193469e+10
+: Name: salary, dtype: float64
+**** boxplot
+#+begin_src python :session cleaning :results graphics file output :file salary_box.png
+  sns.boxplot(df['salary']).set_title('salary')
+#+end_src
+
+#+RESULTS:
+[[file:salary_box.png]]
+
+**** histograma
+#+begin_src python :session cleaning :results graphics file output :file salary_hist.png
+  sns.distplot(df['salary']).set_title('salary')
+#+end_src
+
+#+RESULTS:
+[[file:salary_hist.png]]
+
+** checando se ha valores nulos
+#+begin_src python :session cleaning :results output
+  print(df.isnull().sum())
+#+end_src
+
+#+RESULTS:
+#+begin_example
+id                 0
+score              0
+state              0
+gender             8
+age                0
+qty_patrimony      0
+balance            0
+qty_products       0
+has_credit_card    0
+is_active          0
+salary             7
+churn              0
+dtype: int64
+#+end_example
+
+** Tratamento dos dados categoricos
+*** state
+#+begin_src python :session cleaning :results output
+  t = df.loc[df['state'] != 'RP']
+  t = t.loc[df['state'] != 'TD']
+  t = t.loc[df['state'] != 'SP']
+  print(t.groupby(['state']).size())
+#+end_src
+
+#+RESULTS:
+: state
+: PR    257
+: RS    478
+: SC    258
+: dtype: int64
+
+*** gender
+#+begin_src python :session cleaning :results output
+  #df['gender'].fillna('Masculino', inplace=True)
+  df.loc[df['gender'] == 'M', 'gender'] = 'Masculino'
+  df.loc[df['gender'] == 'F', 'gender'] = 'Feminino'
+  df.loc[df['gender'] == 'Fem', 'gender'] = 'Feminino'
+  print(df)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+       id  score state     gender  age  qty_patrimony   balance  qty_products  has_credit_card  is_active      salary  churn
+0       1    619    RS   Feminino   42              2         0             1                1          1  10134888.0      1
+1       2    608    SC   Feminino   41              1   8380786             1                0          1  11254258.0      0
+2       3    502    RS   Feminino   42              8   1596608             3                1          0  11393157.0      1
+3       4    699    RS   Feminino   39              1         0             2                0          0   9382663.0      0
+4       5    850    SC   Feminino   43              2  12551082             1                1          1    790841.0      0
+..    ...    ...   ...        ...  ...            ...       ...           ...              ...        ...         ...    ...
+994   996    838    SC  Masculino   43              9  12310588             2                1          0  14576583.0      0
+995   997    610    SC  Masculino   29              9         0             3                0          1   8391224.0      0
+996   998    811    SC  Masculino   44              3         0             2                0          1   7843973.0      0
+997   999    587    SC  Masculino   62              7  12128627             1                0          1    677692.0      0
+998  1000    811    PR   Feminino   28              4  16773882             2                1          1    990342.0      0
+
+[999 rows x 12 columns]
+#+end_example
