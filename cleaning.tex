@@ -1,0 +1,185 @@
+% Created 2024-08-04 Sun 00:53
+% Intended LaTeX compiler: pdflatex
+\documentclass[presentation]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usetheme{default}
+\author{Omolu}
+\date{\today}
+\title{Limpeza de Dados com Python}
+\hypersetup{
+ pdfauthor={Omolu},
+ pdftitle={Limpeza de Dados com Python},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 29.4 (Org mode 9.7.9)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\begin{frame}[label={sec:org6b1fb3e},fragile]{Analise de Churn}
+ \begin{block}{Importacao e criacao do dataframe}
+\begin{verbatim}
+import pandas as pd
+df = pd.read_csv('cleaning/Churn.csv', sep=';')
+print(df)
+\end{verbatim}
+\end{block}
+\begin{block}{Renomear as colunas}
+\begin{verbatim}
+df.columns = ["id", "score", "state", "gender", "age", "qty_patrimony", "balance", "qty_products", "has_credit_card", "is_active", "salary", "churn"]
+print(df)
+\end{verbatim}
+\begin{block}{Dados categoricos}
+\begin{itemize}
+\item State
+\item Gender
+\end{itemize}
+\end{block}
+\end{block}
+\begin{block}{Exploracao dos dados categoricos}
+\begin{block}{Dados categoricos sao os dados que sao nao-calculaveis, podendo ser tambem ordenaveis}
+\end{block}
+\begin{block}{Categoricos Nominais ou Categoricos Ordinais}
+\end{block}
+\begin{block}{Estado}
+\begin{verbatim}
+state = df.groupby(["state"]).size()
+state.plot.bar()
+\end{verbatim}
+\end{block}
+\begin{block}{Genero}
+\begin{verbatim}
+gender = df.groupby(["gender"]).size()
+gender.plot.bar()
+\end{verbatim}
+\end{block}
+\end{block}
+\begin{block}{Exploracao dos dados numericos}
+\begin{block}{score}
+\begin{block}{describe}
+\begin{verbatim}
+print(df['score'].describe())
+\end{verbatim}
+\end{block}
+\begin{block}{boxplot}
+\begin{verbatim}
+import seaborn as sns
+sns.boxplot(df['score']).set_title('score')
+\end{verbatim}
+\end{block}
+\begin{block}{histograma}
+\begin{verbatim}
+sns.distplot(df['score']).set_title('score')
+\end{verbatim}
+\end{block}
+\end{block}
+\begin{block}{age}
+\begin{block}{describe}
+\begin{verbatim}
+print(df['age'].describe())
+\end{verbatim}
+\end{block}
+\begin{block}{boxplot}
+\begin{verbatim}
+sns.boxplot(df['age']).set_title('age')
+\end{verbatim}
+\end{block}
+\begin{block}{histogram}
+\begin{verbatim}
+sns.distplot(df['age']).set_title('age')
+\end{verbatim}
+\end{block}
+\end{block}
+\begin{block}{balance}
+\begin{block}{describe}
+\begin{verbatim}
+print(df['balance'].describe())
+\end{verbatim}
+\end{block}
+\begin{block}{boxplot}
+\begin{verbatim}
+sns.boxplot(df['balance']).set_title("balance")
+\end{verbatim}
+\end{block}
+\begin{block}{histograma}
+\begin{verbatim}
+sns.distplot(df['balance']).set_title('balance')
+\end{verbatim}
+\end{block}
+\end{block}
+\begin{block}{salary}
+\begin{block}{describe}
+\begin{verbatim}
+print(df['salary'].describe())
+\end{verbatim}
+\end{block}
+\begin{block}{boxplot}
+\begin{verbatim}
+sns.boxplot(df['salary']).set_title('salary')
+\end{verbatim}
+\end{block}
+\begin{block}{histograma}
+\begin{verbatim}
+sns.distplot(df['salary']).set_title('salary')
+\end{verbatim}
+\end{block}
+\end{block}
+\end{block}
+\begin{block}{checando se ha valores nulos}
+\begin{verbatim}
+print(df.isnull().sum())
+\end{verbatim}
+\end{block}
+\begin{block}{Tratamento dos dados categoricos}
+\begin{block}{state}
+\begin{verbatim}
+t = df.loc[df['state'] != 'RP']
+t = t.loc[df['state'] != 'TD']
+t = t.loc[df['state'] != 'SP']
+print(t.groupby(['state']).size())
+\end{verbatim}
+\end{block}
+\begin{block}{gender}
+\begin{verbatim}
+#df['gender'].fillna('Masculino', inplace=True)
+df.loc[df['gender'] == 'M', 'gender'] = 'Masculino'
+df.loc[df['gender'] == 'F', 'gender'] = 'Feminino'
+df.loc[df['gender'] == 'Fem', 'gender'] = 'Feminino'
+print(df)
+\end{verbatim}
+
+\begin{verbatim}
+print(df['gender'].value_counts())
+
+\end{verbatim}
+\end{block}
+\end{block}
+\begin{block}{Tratamento dos dados numericos}
+\begin{block}{score}
+nada pra fazer, nao ha score 0 nem acima de 1000
+\end{block}
+\begin{block}{age}
+\begin{itemize}
+\item Se seria uma instituicao financeira, logo apenas pessoas acima de 18 anos deveria estar aqui
+porem como ha de -20 a 140, e pode ocorrer de ter linhas com dados importantes, devemos apenas
+fazer a media das idades para `age <= 18 \&\& age >= 80` tendo em mente que o range de idade
+seria de 18 a 80 anos
+\end{itemize}
+\end{block}
+\end{block}
+\end{frame}
+\end{document}

@@ -94,13 +94,13 @@
 : max      850.000000
 : Name: score, dtype: float64
 **** boxplot
-#+begin_src python :session cleaning :results graphics file output :file score_box.svg
+#+begin_src python :session cleaning :results graphics file output :file score_box.png
   import seaborn as sns
   sns.boxplot(df['score']).set_title('score')
 #+end_src
 
 #+RESULTS:
-[[file:score_box.svg]]
+[[file:score_box.png]]
 
 **** histograma
 #+begin_src python :session cleaning :results graphics file output :file score_histogram.png
@@ -271,3 +271,24 @@ dtype: int64
 
 [999 rows x 12 columns]
 #+end_example
+
+#+begin_src python :session cleaning :results output
+  print(df['gender'].value_counts())
+
+#+end_src
+
+#+RESULTS:
+: gender
+: Masculino    527
+: Feminino     464
+: Name: count, dtype: int64
+
+** Tratamento dos dados numericos
+*** score
+nada pra fazer, nao ha score 0 nem acima de 1000
+
+*** age
+- Se seria uma instituicao financeira, logo apenas pessoas acima de 18 anos deveria estar aqui
+  porem como ha de -20 a 140, e pode ocorrer de ter linhas com dados importantes, devemos apenas
+  fazer a media das idades para `age <= 18 && age >= 80` tendo em mente que o range de idade
+  seria de 18 a 80 anos
